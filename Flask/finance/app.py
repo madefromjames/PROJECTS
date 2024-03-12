@@ -106,7 +106,21 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    symbol = request.form.get("symbol")
+    # If the user submitted the form
+    if request.method == "POST":
+        symbol = request.form.get("symbol").upper()
+
+        # Look up the stock quote using the provided symbol
+        quote = lookup(symbol)
+
+        # If the lookup fails return an error message
+        if not quote:
+            return apology("Invalid symbol")
+
+        # Otherwise, render the quoted.html template with the quote and symbol
+        return render_template("quoted.html", quote=quote, symbol=symbol)
+
+    # If accessed via a GET request, render the quote.html template
     return render_template("quote.html")
 
 
@@ -140,8 +154,8 @@ def register():
 
                 # Redirect user to home page
                 return redirect("/")
-    else:
-        return render_template("register.html")
+
+    return render_template("register.html")
 
 
 @app.route("/sell", methods=["GET", "POST"])
