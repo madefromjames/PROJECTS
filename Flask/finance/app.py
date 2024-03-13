@@ -50,31 +50,49 @@ def buy():
     """Buy shares of stock"""
     if request.method == "POST":
         symbol = request.form.get("symbol").upper().strip()
-        shares = int(request.form.get("shares"))
+        shares = request.form.get("shares")
+        user_id = session["user_id"]
 
-        if symbol == "":
+        try:
+            shares = float(shares)
+        except ValueError:
+            return apology("Shares must be a whole number")
+
+        if float(shares) != int(shares):
+            return apology("Shares must be a whole number")
+        if not symbol:
             return apology("Missing symbol")
-        elif not lookup(symbol):
+        if not shares:
+            return apology("Missing shares")
+        shares = int(shares)
+        if shares <= 0:
+            return apology("Not a positive shares")
+        try:
+            shares = float(request.form.get("shares"))
+        except ValueError:
+            return apology("Shares must be a number")
+
+        stock = lookup(symbol)
+        if stock is None:
             return apology("Invalid symbol")
+
+        transaction = shares * stock['price']
+
+        cash = db.execute("SELECT cash FROM users WHERE id = ?", user_id)[0]['cash']
+
+        if cash < transaction:
+            return apology("Can't afford")
+
+        new_cash = cash - transaction
+        symbols = db.execute("SELECT * FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)
+        if symbols:
+            db.execute("UPDATE purchase SET shares = shares + ?, price = price + ?, total = total + ? WHERE user_id = ? AND symbol = ?", shares, stock['price'], transaction, user_id, symbol)
+            db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash, user_id)
         else:
-            price = (lookup(symbol)["price"])
-            total = price * shares
-            balance = db.execute("SELECT cash FROM users WHERE id = ?", session.get("user_id"))[0]['cash']
-
-            if balance < price:
-                return apology("Can't afford")
-            else:
-                new_balance = balance - total
-                symbols = db.execute("SELECT * FROM purchase WHERE user_id = ? AND symbol = ?", session["user_id"], symbol)
-                if symbols:
-                    db.execute("UPDATE purchase SET shares = shares + ?, price = price + ?, total = total + ? WHERE user_id = ? AND symbol = ?", shares, price, total, session["user_id"], symbol)
-                    db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session.get("user_id"))
-                else:
-                    db.execute("INSERT INTO purchase(symbol, shares, price, total, user_id) VALUES(?, ?, ?, ?, ?)", symbol, shares, price, total, session.get("user_id"))
-                    db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session.get("user_id"))
-                flash('Bought!')
-                return redirect('/')
-
+            db.execute("INSERT INTO purchase(symbol, shares, price, total, user_id) VALUES(?, ?, ?, ?, ?)", symbol, shares, stock['price'], transaction, user_id)
+            db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash, user_id)
+        flash('Bought!')
+        return redirect('/')
 
     return render_template("buy.html")
 
