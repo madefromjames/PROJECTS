@@ -35,14 +35,38 @@ def after_request(response):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return apology("TODO")
+    purchases = db.execute("SELECT * FROM purchase WHERE user_id = ?", session["user_id"])
+    cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]['cash']
+    total = db.execute("SELECT SUM(total) FROM purchase WHERE user_id = ?", session["user_id"])[0]['SUM(total)'] + cash
+    return render_template("index.html", purchases=purchases, cash=cash, total=total)
 
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+        symbol = request.form.get("symbol").upper()
+        shares = int(request.form.get("shares"))
+
+        if symbol == "":
+            return apology("Missing symbol")
+        elif not lookup(symbol):
+            return apology("Invalid symbol")
+        else:
+            price = (lookup(symbol)["price"]) * shares
+            balance = db.execute("SELECT cash FROM users WHERE id = ?", session.get("user_id"))[0]['cash']
+
+            if balance < price:
+                return apology("Can't afford")
+            else:
+                new_balance = balance - price
+                db.execute("INSERT INTO purchase(symbol, shares, price, total, user_id) VALUES(?, ?, ?, ?, ?)", symbol, shares, lookup(symbol)["price"], price, session.get("user_id"))
+                db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session.get("user_id"))
+                return redirect('/')
+
+
+    return render_template("buy.html")
 
 
 @app.route("/history")
@@ -130,7 +154,7 @@ def register():
     if request.method == "POST":
         name = request.form.get("username")
         password = request.form.get("password")
-        password_again = request.form.get("password_again")
+        password_again = request.form.get("confirmation")
 
         existing_user = db.execute("SELECT * FROM users WHERE username = ?", name)
 
