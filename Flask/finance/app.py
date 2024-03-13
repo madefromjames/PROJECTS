@@ -37,8 +37,11 @@ def index():
     """Show portfolio of stocks"""
     purchases = db.execute("SELECT * FROM purchase WHERE user_id = ?", session["user_id"])
     cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]['cash']
-    total = db.execute("SELECT SUM(total) FROM purchase WHERE user_id = ?", session["user_id"])[0]['SUM(total)'] + cash
-    return render_template("index.html", purchases=purchases, cash=cash, total=total)
+    total = db.execute("SELECT SUM(total) FROM purchase WHERE user_id = ?", session["user_id"])[0]['SUM(total)']
+    if total is None:
+        total = 0
+    grand_total = cash + total
+    return render_template("index.html", purchases=purchases, cash=cash, total=grand_total)
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -46,7 +49,7 @@ def index():
 def buy():
     """Buy shares of stock"""
     if request.method == "POST":
-        symbol = request.form.get("symbol").upper()
+        symbol = request.form.get("symbol").upper().strip()
         shares = int(request.form.get("shares"))
 
         if symbol == "":
@@ -54,15 +57,22 @@ def buy():
         elif not lookup(symbol):
             return apology("Invalid symbol")
         else:
-            price = (lookup(symbol)["price"]) * shares
+            price = (lookup(symbol)["price"])
+            total = price * shares
             balance = db.execute("SELECT cash FROM users WHERE id = ?", session.get("user_id"))[0]['cash']
 
             if balance < price:
                 return apology("Can't afford")
             else:
-                new_balance = balance - price
-                db.execute("INSERT INTO purchase(symbol, shares, price, total, user_id) VALUES(?, ?, ?, ?, ?)", symbol, shares, lookup(symbol)["price"], price, session.get("user_id"))
-                db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session.get("user_id"))
+                new_balance = balance - total
+                symbols = db.execute("SELECT * FROM purchase WHERE user_id = ? AND symbol = ?", session["user_id"], symbol)
+                if symbols:
+                    db.execute("UPDATE purchase SET shares = shares + ?, price = price + ?, total = total + ? WHERE user_id = ? AND symbol = ?", shares, price, total, session["user_id"], symbol)
+                    db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session.get("user_id"))
+                else:
+                    db.execute("INSERT INTO purchase(symbol, shares, price, total, user_id) VALUES(?, ?, ?, ?, ?)", symbol, shares, price, total, session.get("user_id"))
+                    db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, session.get("user_id"))
+                flash('Bought!')
                 return redirect('/')
 
 
@@ -73,7 +83,9 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-    return apology("TODO")
+    transactions = db.execute("SELECT * FROM purchase WHERE user_id = ?", session["user_id"])
+    print(transactions)
+    return render_template("history.html", transactions=transactions)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -134,6 +146,8 @@ def quote():
     if request.method == "POST":
         symbol = request.form.get("symbol").upper()
 
+        if not symbol:
+            return apology("Missing symbol")
         # Look up the stock quote using the provided symbol
         quote = lookup(symbol)
 
@@ -142,7 +156,7 @@ def quote():
             return apology("Invalid symbol")
 
         # Otherwise, render the quoted.html template with the quote and symbol
-        return render_template("quoted.html", quote=quote, symbol=symbol)
+        return render_template("quoted.html", price=format(quote['price'], '.2f'), symbol=quote['symbol'])
 
     # If accessed via a GET request, render the quote.html template
     return render_template("quote.html")
@@ -154,30 +168,30 @@ def register():
     if request.method == "POST":
         name = request.form.get("username")
         password = request.form.get("password")
-        password_again = request.form.get("confirmation")
+        confirmation = request.form.get("confirmation")
+
+        if not name:
+            return apology("Username cannot be blank")
+        if not password:
+            return apology("Username cannot be blank")
+        if password != confirmation:
+             return apology("Password don't match")
 
         existing_user = db.execute("SELECT * FROM users WHERE username = ?", name)
 
         if existing_user:
             # Inform the user that the username is taken or blank
             return apology("Username already taken")
-        elif name == "":
-            return apology("Username cannot be blank")
         else:
-            if password != password_again:
-                # Inform the user that password doesn't match
-                return apology("Password doesn't match")
-            else:
-                hashed_password = generate_password_hash(password)
-                db.execute("INSERT INTO users(username, hash) VALUES(?, ?)", name, hashed_password)
+            hashed_password = generate_password_hash(password)
+            db.execute("INSERT INTO users(username, hash) VALUES(?, ?)", name, hashed_password)
 
-                # Retrieve the newly inserted user ID
-                user_id = db.execute("SELECT id FROM users WHERE username = ?", name)[0]['id']
-                session["user_id"] = user_id
-                print("User id:", user_id)
+            # Retrieve the newly inserted user ID
+            user_id = db.execute("SELECT id FROM users WHERE username = ?", name)[0]['id']
+            session["user_id"] = user_id
 
-                # Redirect user to home page
-                return redirect("/")
+            # Redirect user to home page
+            return redirect("/")
 
     return render_template("register.html")
 
@@ -186,4 +200,31 @@ def register():
 @login_required
 def sell():
     """Sell shares of stock"""
-    return apology("TODO")
+    if request.method == "GET":
+        symbols = db.execute("SELECT symbol FROM purchase WHERE user_id = ? GROUP BY symbol HAVING SUM(shares) > 0", session["user_id"])
+        return render_template("sell.html", symbols=[row['symbol'] for row in symbols])
+    else:
+        user_id = session["user_id"]
+        symbol = request.form.get("symbol")
+        shares = int(request.form.get("shares"))
+
+        if not symbol:
+            return apology("Missing symbol")
+        elif shares < 1:
+            return apology("Shares must be positive")
+        else:
+            price = (lookup(symbol)["price"])
+            total = price * shares
+            balance = db.execute("SELECT cash FROM users WHERE id = ?", user_id)[0]['cash']
+            symbols = db.execute("SELECT * FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)
+            if shares > symbols[0]['shares']:
+                return apology("Too many shares")
+            elif symbols:
+                new_balance = balance + total
+                db.execute("UPDATE purchase SET shares = shares - ?, price = price - ?, total = total - ? WHERE user_id = ? AND symbol = ?", shares, price, total, user_id, symbol)
+                db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, user_id)
+                updated_shares = db.execute("SELECT shares FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)[0]['shares']
+                if updated_shares == 0:
+                    db.execute("DELETE FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)
+                return redirect('/')
+
