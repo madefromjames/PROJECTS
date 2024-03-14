@@ -9,6 +9,7 @@
         <thead>
             <tr>
                 <th class="text-start">Symbol</th>
+                <th class="text-end">Type</th>
                 <th class="text-end">Shares</th>
                 <th class="text-end">Price</th>
                 <th class="text-end">Transacted</th>
@@ -18,6 +19,7 @@
             {% for transaction in transactions %}
             <tr>
                 <td class="text-start">{{ transaction.symbol }}</td>
+                <td class="text-end">{{ transaction.type }}</td>
                 <td class="text-end">{{ transaction.shares }}</td>
                 <td class="text-end">{{ transaction.price | usd }}</td>
                 <td class="text-end">{{ transaction.purchase_date }}</td>
