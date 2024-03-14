@@ -20,7 +20,11 @@
             <tr>
                 <td class="text-start">{{ transaction.symbol }}</td>
                 <td class="text-end">{{ transaction.type }}</td>
-                <td class="text-end">{{ transaction.shares }}</td>
+                {% if transaction.type == "SELL" %}
+                    <td class="text-end">-{{ transaction.shares }}</td>
+                {% else %}
+                    <td class="text-end">{{ transaction.shares }}</td>
+                {% endif %}
                 <td class="text-end">{{ transaction.price | usd }}</td>
                 <td class="text-end">{{ transaction.purchase_date }}</td>
             </tr>
