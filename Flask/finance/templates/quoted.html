@@ -6,6 +6,6 @@
 
 {% block main %}
     <div class="mb-3">
-        <p>A share of {{ symbol }} ({{ symbol }}) cost ${{ price }}.</p>
+        <p>A share of {{ symbol }} ({{ symbol }}) cost {{ price | usd }}.</p>
     </div>
 {% endblock %}
