@@ -76,7 +76,7 @@ def buy():
         if stock is None:
             return apology("Invalid symbol")
 
-        transaction = shares * stock['price']
+        transaction = shares * stock["price"]
 
         cash = db.execute("SELECT cash FROM users WHERE id = ?", user_id)[0]['cash']
 
@@ -84,13 +84,16 @@ def buy():
             return apology("Can't afford")
 
         new_cash = cash - transaction
+        type = "BUY"
         symbols = db.execute("SELECT * FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)
         if symbols:
-            db.execute("UPDATE purchase SET shares = shares + ?, price = price + ?, total = total + ? WHERE user_id = ? AND symbol = ?", shares, stock['price'], transaction, user_id, symbol)
+            db.execute("UPDATE purchase SET shares = shares + ?, total = total + ? WHERE user_id = ? AND symbol = ?", shares, transaction, user_id, symbol)
             db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash, user_id)
+            db.execute("INSERT INTO history(symbol, type, shares, price, trans_id) VALUES(?, ?, ?, ?, ?)", symbol, type, shares, stock["price"], user_id)
         else:
-            db.execute("INSERT INTO purchase(symbol, shares, price, total, user_id) VALUES(?, ?, ?, ?, ?)", symbol, shares, stock['price'], transaction, user_id)
+            db.execute("INSERT INTO purchase(symbol, shares, price, total, user_id) VALUES(?, ?, ?, ?, ?)", symbol, shares, stock["price"], transaction, user_id)
             db.execute("UPDATE users SET cash = ? WHERE id = ?", new_cash, user_id)
+            db.execute("INSERT INTO history(symbol, type, shares, price, trans_id) VALUES(?, ?, ?, ?, ?)", symbol, type, shares, stock["price"], user_id)
         flash('Bought!')
         return redirect('/')
 
@@ -101,9 +104,49 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
-    transactions = db.execute("SELECT * FROM purchase WHERE user_id = ?", session["user_id"])
+    transactions = db.execute("SELECT * FROM history WHERE trans_id = ?", session["user_id"])
     print(transactions)
     return render_template("history.html", transactions=transactions)
+
+@app.route("/deposit", methods=["GET", "POST"])
+@login_required
+def deposit():
+    """Increase cash amount"""
+    if request.method == "POST":
+        deposit = int(request.form.get("deposit"))
+
+        if deposit <= 0:
+            return apology("Enter positive number")
+        if not deposit:
+            return apology("Missing amount")
+
+        symbol, type, shares = "-", "DEPOSIT", "-"
+        user_id = session["user_id"]
+        db.execute("UPDATE users SET cash = cash + ? WHERE id = ?", deposit, user_id)
+        db.execute("INSERT INTO history(symbol, type, shares, price, trans_id) VALUES(?, ?, ?, ?, ?)", symbol, type, shares, deposit, user_id)
+        return redirect('/')
+
+    return render_template("deposit.html")
+
+@app.route("/withdraw", methods=["GET", "POST"])
+@login_required
+def withdraw():
+    """Withdraw cash amount"""
+    if request.method == "POST":
+        withdraw = int(request.form.get("withdraw"))
+
+        if withdraw <= 0:
+            return apology("Enter positive number")
+        if not withdraw:
+            return apology("Missing amount")
+
+        symbol, type, shares = "-", "WITHDRAW", "-"
+        user_id = session["user_id"]
+        db.execute("UPDATE users SET cash = cash - ? WHERE id = ?", withdraw, user_id)
+        db.execute("INSERT INTO history(symbol, type, shares, price, trans_id) VALUES(?, ?, ?, ?, ?)", symbol, type, shares, withdraw, user_id)
+        return redirect('/')
+
+    return render_template("withdraw.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -174,7 +217,7 @@ def quote():
             return apology("Invalid symbol")
 
         # Otherwise, render the quoted.html template with the quote and symbol
-        return render_template("quoted.html", price=format(quote['price'], '.2f'), symbol=quote['symbol'])
+        return render_template("quoted.html", price=quote['price'], symbol=quote['symbol'])
 
     # If accessed via a GET request, render the quote.html template
     return render_template("quote.html")
@@ -231,6 +274,7 @@ def sell():
         elif shares < 1:
             return apology("Shares must be positive")
         else:
+            type = "SELL"
             price = (lookup(symbol)["price"])
             total = price * shares
             balance = db.execute("SELECT cash FROM users WHERE id = ?", user_id)[0]['cash']
@@ -239,8 +283,9 @@ def sell():
                 return apology("Too many shares")
             elif symbols:
                 new_balance = balance + total
-                db.execute("UPDATE purchase SET shares = shares - ?, price = price - ?, total = total - ? WHERE user_id = ? AND symbol = ?", shares, price, total, user_id, symbol)
+                db.execute("UPDATE purchase SET shares = shares - ?, total = total - ? WHERE user_id = ? AND symbol = ?", shares, total, user_id, symbol)
                 db.execute("UPDATE users SET cash = ? WHERE id = ?", new_balance, user_id)
+                db.execute("INSERT INTO history(symbol, type, shares, price, trans_id) VALUES(?, ?, ?, ?, ?)", symbol, type, shares, price, user_id)
                 updated_shares = db.execute("SELECT shares FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)[0]['shares']
                 if updated_shares == 0:
                     db.execute("DELETE FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)
