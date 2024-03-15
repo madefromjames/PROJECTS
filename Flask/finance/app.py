@@ -122,8 +122,12 @@ def deposit():
 
         symbol, type, shares = "-", "DEPOSIT", "-"
         user_id = session["user_id"]
+        cash = db.execute("SELECT cash FROM users WHERE id = ?", user_id)[0]['cash']
+        if (cash + deposit) > 1000000:
+            return apology("Maximum cash balance allowed is $1M")
         db.execute("UPDATE users SET cash = cash + ? WHERE id = ?", deposit, user_id)
         db.execute("INSERT INTO history(symbol, type, shares, price, trans_id) VALUES(?, ?, ?, ?, ?)", symbol, type, shares, deposit, user_id)
+        flash('Deposit Succesful')
         return redirect('/')
 
     return render_template("deposit.html")
@@ -142,8 +146,12 @@ def withdraw():
 
         symbol, type, shares = "-", "WITHDRAW", "-"
         user_id = session["user_id"]
+        cash = db.execute("SELECT cash FROM users WHERE id = ?", user_id)
+        if withdraw > cash[0]['cash']:
+            return apology("Insufficient fund")
         db.execute("UPDATE users SET cash = cash - ? WHERE id = ?", withdraw, user_id)
         db.execute("INSERT INTO history(symbol, type, shares, price, trans_id) VALUES(?, ?, ?, ?, ?)", symbol, type, shares, withdraw, user_id)
+        flash('Withdrawal Succesful')
         return redirect('/')
 
     return render_template("withdraw.html")
@@ -289,5 +297,6 @@ def sell():
                 updated_shares = db.execute("SELECT shares FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)[0]['shares']
                 if updated_shares == 0:
                     db.execute("DELETE FROM purchase WHERE user_id = ? AND symbol = ?", user_id, symbol)
+                flash('Sold!')
                 return redirect('/')
 
