@@ -171,8 +171,9 @@ def login():
             return apology("must provide username", 403)
 
         # Ensure password was submitted
-        elif not request.form.get("password"):
+        if not request.form.get("password"):
             return apology("must provide password", 403)
+
 
         # Query database for username
         rows = db.execute(
@@ -184,6 +185,7 @@ def login():
             rows[0]["hash"], request.form.get("password")
         ):
             return apology("invalid username and/or password", 403)
+
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -258,6 +260,8 @@ def register():
             # Retrieve the newly inserted user ID
             user_id = db.execute("SELECT id FROM users WHERE username = ?", name)[0]['id']
             session["user_id"] = user_id
+
+            flash('Registered Successful')
 
             # Redirect user to home page
             return redirect("/")
