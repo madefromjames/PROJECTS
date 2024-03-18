@@ -17,38 +17,50 @@ Run `.schema` in the SQLite prompt to view the structure of the `finance.db` dat
 
 This file contains the main application logic and route implementations.
 It handles user authentication, registration, stock quotes, buying and selling stocks, and displaying transaction history.
-helpers.py
+
+`helpers.py`
+
 This file contains helper functions used throughout the application, such as rendering apologies, requiring user login, and formatting values.
-requirements.txt
+
+`requirements.txt`
+
 Lists the required Python packages for the application.
-static/
+
+`static/`
+
 Contains static files including CSS styles.
-templates/
+
+`templates/`
+
 Contains HTML templates for different pages of the application.
-Implementation Details
-Register
+
+## Implementation Details
+### Register
 Allows users to register for an account via a form.
 Validates input fields for username and password.
 Hashes the user's password before storing it in the database.
-Quote
+### Quote
 Allows users to look up a stock's current price by entering its symbol.
 Renders an HTML form for users to input the stock symbol.
 Displays the current price of the stock after submitting the form.
-Buy
+### Buy
 Enables users to buy stocks by entering the stock symbol and number of shares.
 Validates input fields and checks if the user can afford the purchase.
 Updates the user's cash balance and records the transaction in the database.
-Sell
+### Sell
 Allows users to sell shares of a stock they own.
 Validates input fields and checks if the user owns enough shares to sell.
 Updates the user's cash balance and records the transaction in the database.
-Index
+### Index
 Displays a summary of the user's portfolio, including owned stocks, number of shares, current prices, and total values.
 Also displays the user's current cash balance and the overall portfolio value.
-History
-Displays a table summarizing all of a user's past transactions, including buys and sells.
+### History
+Displays a table summarizing all of a user's past transactions, including buys, sells, deposits and withdrawals.
 Provides details such as the stock symbol, transaction type, price, number of shares, and transaction date.
-Personal Touch
-Users can add additional cash to their account to manage their balance effectively.
-Conclusion
+### Deposits
+Allows users to add additional cash to their account to manage their balance effectively.
+### Withdrawal
+Enables users to withdraw cash from their account as needed.
+
+## Conclusion
 This README provides an overview of the project structure, how to run the application, and details about its implementation. Explore the codebase further to understand specific functionalities
