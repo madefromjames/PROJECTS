@@ -1,0 +1,177 @@
+:root {
+    --rem: 16;
+}
+
+body {
+    font-family: arial, sans-serif;
+}
+
+div {
+    display: block;
+}
+
+div.container {
+    min-height: 100%;
+    margin: 0 auto -60px;
+}
+
+header.gb_Pa {
+    display: block;
+}
+
+.gb_Pa {
+    color: black;
+    min-width: 160px;
+    position: relative;
+    transition: box-shadow 250ms;
+}
+
+.gb_5d {
+    height: 24px;
+    width: 74px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.gb_Ic {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.appbar {
+    color: #d93025;
+    font-size: 20px;
+    margin: 25px 35px;
+}
+
+.gy3Eif {
+    border-bottom: 1px solid #ebebeb;
+}
+
+div.Mza7yc {
+    max-width: 1140px;
+    min-width: 200px;
+    width: 96%;
+    margin: 40px 2% 0 45px;
+}
+
+div, form, span {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+    text-decoration: none;
+}
+
+form {
+    display: block;
+    margin-top: 0em;
+}
+
+div.otByu div.I1Kbt {
+    float: left;
+    display: inline-block;
+    min-width: 167px;
+    width: 16%;
+    font-size: 16px;
+    min-height: 42px;
+    font-weight: 500;
+    color: #333;
+    vertical-align: middle;
+}
+
+div.otByu div.HoCfzc {
+    float: left;
+    display: inline-block;
+    min-width: 167px;
+    min-height: 41px;
+    vertical-align: middle;
+    width: 50%;
+}
+
+div.otByu div.yIQOUb {
+    clear: both;
+}
+
+div.lOTAE {
+    height: 30px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+div.otByu div.FAcADc {
+    float: left;
+    display: inline-block;
+    min-width: 167px;
+    width: 16%;
+    height: 42px;
+    color: #222;
+    font-size: 13px;
+    line-height: 16px;
+    vertical-align: middle;
+}
+
+div.otByu div.jYcx0e {
+    float: left;
+    display: inline-block;
+    min-width: 167px;
+    min-height: 41px;
+    vertical-align: middle;
+    width: 50%;
+}
+
+div.PLLUQc {
+    padding-right: 16px;
+}
+
+div.otByu div.jYcx0e input[type=text], div.otByu div.jYcx0e span.PnexQd {
+    width: 100%;
+    text-align: left;
+}
+
+.jfk-textinput {
+    /* -webkit-border-radius: 1px;
+    -moz-border-radius: 1px; */
+    border-radius: 1px;
+    border: 1px solid #d9d9d9;
+    border-top: 1px solid #c0c0c0;
+    font-size: 13px;
+    height: 25px;
+    padding: 1px 8px;
+    outline: none;
+}
+
+
+div.otByu div.cwqNnb {
+    float: left;
+    display: inline-block;
+    width: 32%;
+    min-width: 160px;
+    margin: 0 0 8px 1%;
+    color: #555;
+    font-size: 11px;
+    padding-left: 5px;
+    vertical-align: middle;
+    position: relative;
+}
+
+div.otByu div.cwqNnb span.BFlQMb {
+    color: #666;
+    font-family: monospace;
+    font-size: 11px;
+    white-space: pre;
+}
+
+div.otByu div.orcpGe {
+    float: left;
+    display: inline-block;
+    width: 33%;
+    font-size: 13px;
+    font-weight: 700;
+    color: #777;
+    padding-left: 5px;
+    vertical-align: middle;
+}
