@@ -1,3 +1,8 @@
-import os
+from markdown2 import Markdown
+markdowner = Markdown()
 
-print(os.getcwd())
+one = markdowner.convert("*boo!*")
+print(one)
+
+two = markdowner.convert("**boom!**")
+print(two)
