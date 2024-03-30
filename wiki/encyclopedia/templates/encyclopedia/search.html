@@ -6,12 +6,17 @@
 
 {% block body %}
     <h1>Search Result</h1>
-    <p><b><i>{{q}}</i></b> not found. Do you mean:</p>
-
+    
     <ul>
-        {% for entry in recommend %}
-            <li> <a href="{% url 'entry' title=entry %}">{{ entry }}</a></li>
-        {% endfor %}
+        {%  if recommend %}
+            <p><b><i>{{q}}</i></b> not found. Do you mean:</p>
+            {% for entry in recommend %}
+                <li> <a href="{% url 'entry' title=entry %}">{{ entry }}</a></li>
+            {% endfor %}
+        {% else %}
+            <p><b><i>{{q}}</i></b> not found.</p>
+            <p>No match found</p>
+        {% endif %}
     </ul>
 
 {% endblock %}

@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    {{content}}
+    {{content | safe }}
 
+    <a href="{% url 'edit' %}?title={{ title|urlencode }}"><input type="submit" name="" class="btn btn-outline-danger btn-sm" value="Edit"></a>
 {% endblock %}
