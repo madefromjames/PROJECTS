@@ -24,7 +24,9 @@ def index(request):
 def entry(request, title):
     content = util.get_entry(title)
     if content == None:
-        return render(request, "encyclopedia/error.html")
+        return render(request, "encyclopedia/error.html", {
+            "message": "Page does not exist"
+        })
     return render(request, "encyclopedia/entry.html", {
         "title": title,
         "content": md_to_html(content)
