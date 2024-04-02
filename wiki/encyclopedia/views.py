@@ -35,12 +35,9 @@ def entry(request, title):
 def search(request):
     if request.method == "POST":
         q = request.POST.get('q')
-        content = util.get_entry(q)
+        content = util.get_entry(q.lower())
         if content != None:
-            return render(request, "encyclopedia/entry.html", {
-                "title": q,
-                "content": content
-            })
+            return redirect(reverse("entry", kwargs={"title": q}))
         else:
             entries = util.list_entries()
             recommend = []
@@ -63,9 +60,7 @@ def new_page(request):
             })
         else:
             util.save_entry(title, content)
-            return render(request, "encyclopedia/entry.html", {
-                "title": title, "content": md_to_html(content)
-            })
+            return redirect(reverse("entry", kwargs={"title": title}))
 
     return render(request, "encyclopedia/newpage.html")
 
