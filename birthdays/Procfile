@@ -1,1 +1,1 @@
-web: flask run
+web: python -W ignore::SyntaxWarning -m flask run
