@@ -27,17 +27,10 @@ The application has been styled using the `styles.css` file.
 The application has been tested and validated using the Flask framework and SQLite.
 
 ## Usage
-To use the application, simply run the `app.py` file using a Python interpreter. The application will start a local server on port 5000. To access the application, open a web browser and navigate to http://localhost:5000/.
+To access the Birthday Tracker Web Application, simply visit the following link: [Birthday Tracker](https://cooing-hornet-zealon.koyeb.app/)
 
-To add a new birthday, simply fill out the form on the index page and submit it. The new birthday will be added to the database and displayed on the page.
+- To add a new birthday, simply fill out the form on the index page and submit it. The new birthday will be added to the database and displayed on the page.
 
-To delete a birthday, click on the "Delete" button next to the birthday in the table. The birthday will be removed from the database and the page will be re-rendered.
+- To delete a birthday, click on the "Delete" button next to the birthday in the table. The birthday will be removed from the database and the page will be re-rendered.
 
-To edit a birthday, click on the "Edit" button next to the birthday in the table. The birthday details will be displayed in a form, which can be edited and submitted to update the database.
-
-## Dependencies
-The following dependencies are required to run the application:
-
-Python<br>
-Flask<br>
-SQLite<br>
+- To edit a birthday, click on the "Edit" button next to the birthday in the table. The birthday details will be displayed in a form, which can be edited and submitted to update the database.
