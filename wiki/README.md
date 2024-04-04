@@ -50,4 +50,4 @@ Provide a link on each entry page to edit the entry's Markdown content.
 - A feature to redirect users to a random encyclopedia entry.
 
 ## Markdown to HTML Conversion
-Convert Markdown content to HTML before displaying it to the user on each entry page using `safe` filter in `entry.html`.
+Converting Markdown content to HTML using `safe` filter in `entry.html` allows user to view the page in human-friendly language instead of pure `HTML` syntax.
