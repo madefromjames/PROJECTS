@@ -179,7 +179,7 @@ def main():
             nav_label.pack(fill='x')
 
             # Back button
-            back_btn = Button(nav_label, image=img1, bg="#040402", border=0, justify='center', command=back_button, relief=FLAT)
+            back_btn = Button(nav_label, image=img1, bg="#040402", border=0, justify='center', command=back_button)
             back_btn.pack(side=LEFT, padx=(10, 85))
             
             # Score label
