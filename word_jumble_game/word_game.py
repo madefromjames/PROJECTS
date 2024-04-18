@@ -14,7 +14,7 @@ def main():
             window = Tk()
             window.geometry("500x500+500+100")
             window.resizable(0, 0)
-            window.title("Word Shuffle Game")
+            window.title("Word Game")
             window.configure(background="#040402")
             window.iconbitmap(r'wordicon.ico')
 
@@ -68,13 +68,13 @@ def main():
             def reshuffle_btn():
                 nonlocal rand_word
                 original_word = word.cget("text")
-                shuffled_word = original_word
+                new_shuffled_word = original_word
                 # Ensure the new shuffled word is different original and correct word
-                while shuffled_word == original_word or shuffled_word == rand_word:
+                while new_shuffled_word == original_word or new_shuffled_word == rand_word:
                     current_word = list(original_word)
                     random.shuffle(current_word)
-                    shuffled_word = ''.join(current_word)
-                word.config(text=shuffled_word)
+                    new_shuffled_word = ''.join(current_word)
+                word.config(text=new_shuffled_word)
 
             # Check the user's input
             def check():
@@ -95,6 +95,10 @@ def main():
                     break_word = list(rand_word)
                     random.shuffle(break_word)
                     shuffled_word = "".join(break_word)
+                    while shuffled_word == rand_word:
+                        current_word = list(shuffled_word)
+                        random.shuffle(current_word)
+                        shuffled_word = "".join(current_word)
                     word.configure(text=shuffled_word)
                     get_input.delete(0, END)
                     hint_count = 0
@@ -163,6 +167,10 @@ def main():
                     break_word = list(rand_word)
                     random.shuffle(break_word)
                     shuffled_word = "".join(break_word)
+                    while shuffled_word == rand_word:
+                        current_word = list(shuffled_word)
+                        random.shuffle(current_word)
+                        shuffled_word = "".join(current_word)
                     word.configure(text=shuffled_word)
                     get_input.delete(0, END)
                     hint_label.config(text="HINT ▶")
