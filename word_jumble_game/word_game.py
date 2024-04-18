@@ -1,4 +1,4 @@
-from tkinter import Tk, Button, Label, Entry, Frame, END, PhotoImage, LEFT, FLAT
+from tkinter import Tk, Button, Label, Entry, Frame, END, PhotoImage, LEFT
 import random
 from tkinter import messagebox
 
