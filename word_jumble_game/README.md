@@ -18,14 +18,14 @@ Word Jumble Game is a simple yet addictive game where players need to unscramble
 
 ## Installation
 
-#### Download Executable
+### Download Executable
 
 If you prefer not to clone the repository, you can download the executable file directly:
 [Download Word Game Executable](https://github.com/madefromjames/PROJECTS/blob/main/word_jumble_game/word_game.exe). You might need to disable antivirus and ignore any warnings
 
-#### Clone Repository (Manual Installation)
+### Clone Repository (Manual Installation)
 
-#### _Requirements_
+_Requirements_
 
 Before running the game, ensure you have the following dependencies installed:
 
