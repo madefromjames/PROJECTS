@@ -154,6 +154,32 @@ def main():
                 # Remove the message after 4 seconds
                 window.after(4000, lambda: message_label.config(text=""))
             
+            # Function to skip/change word
+            def skip_word():
+                nonlocal rand_num, points, previous_word, rand_word
+                previous_word = rand_word
+                response = messagebox.askyesno('Warning', 'You will lose 4 points. Do you wish to proceed?')
+                if response:
+                    if points < 4:
+                        show_message("Not enough points!")
+                        return
+                    points -= 4
+                    point.config(text=f"Points: {str(points)}")
+                    # Select a new random word
+                    rand_num = random.randrange(0, len(main_words))
+                    rand_word = main_words[rand_num]
+                    # Reshuffle the word for display
+                    break_word = list(rand_word)
+                    random.shuffle(break_word)
+                    shuffled_word = "".join(break_word)
+                    while shuffled_word == rand_word:
+                        current_word = list(shuffled_word)
+                        random.shuffle(current_word)
+                        shuffled_word = "".join(current_word)
+                    word.configure(text=shuffled_word)
+                    get_input.delete(0, END)
+                    hint_label.config(text="HINT ▶")
+                    show_message(f"Previous Answer: {previous_word.upper()}")
 
             # Function to go back to start page
             def back_button():
@@ -209,6 +235,14 @@ def main():
             submit = Button(button_frame, text="✅ Submit", width=14, bd=4, font=("", 13), bg="#ad8d76", cursor="hand2", command=check)
             submit.grid(row=0, column=1, padx=10, pady=10)  # Pack the submit button to the right with padding
             window.bind('<Return>', lambda event=None: submit.invoke()) # Bind keyboard's ENTER button to submit button
+
+            # Hint button
+            hint = Button(button_frame, text="ℹ️ Hint", width=14, bd=4, font=("", 13), bg="#ad8d76", cursor="hand2", command= lambda: show_hint(word.cget("text"), hint_count))
+            hint.grid(row=1, column=0, padx=10, pady=10)  # Pack the hint button at the top with padding
+
+            # Skip button
+            skip = Button(button_frame, text="⏩ Skip", width=14, bd=4, font=("", 13), bg="#ad8d76", cursor="hand2", command=skip_word)
+            skip.grid(row=1, column=1, padx=10, pady=10)  # Pack the skip button at the top with padding
 
 
             window.mainloop()
