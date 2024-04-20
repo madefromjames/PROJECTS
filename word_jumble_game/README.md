@@ -21,7 +21,7 @@ Word Jumble Game is a simple yet addictive game where players need to unscramble
 #### Download Executable
 
 If you prefer not to clone the repository, you can download the executable file directly:
-[Download Word Game Executable](https://github.com/madefromjames/digital_fortress_python_project/blob/main/word_game.exe). You might disable antivirus and ignore any warnings
+[Download Word Game Executable](https://github.com/madefromjames/PROJECTS/blob/main/word_jumble_game/word_game.exe). You might need to disable antivirus and ignore any warnings
 
 #### Clone Repository (Manual Installation)
 
