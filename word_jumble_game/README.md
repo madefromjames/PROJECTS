@@ -34,10 +34,10 @@ Before running the game, ensure you have the following dependencies installed:
 - **Tkinter** (usually included with Python installation)
     - Try running `python -m tkinter` in your terminal, and observe if it opens a blank Tkinter window. If it does, then Tkinter is installed and working. If you encounter an error message, it indicates there may be an issue with your Tkinter installation.
 
-`git clone https://github.com/madefromjames/digital_fortress_python_project.git`
+`git clone https://github.com/madefromjames/PROJECTS --single-branch --branch main --depth 1 word_jumble_game`
 
 - Navigate to the project directory:
-    - `cd digital_fortress_python_project`
+    - `cd word_jumble_game`
 - Run the game:
     - `python word_game.py`
 
