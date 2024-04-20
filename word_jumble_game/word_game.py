@@ -1,6 +1,7 @@
 from tkinter import Tk, Button, Label, Entry, Frame, END, PhotoImage, LEFT, RIGHT, Toplevel
 import random
 from tkinter import messagebox
+from pathlib import Path
 
 def main():
 
@@ -16,10 +17,11 @@ def main():
             window.resizable(0, 0)
             window.title("Word Game")
             window.configure(background="#040402")
-            window.iconbitmap(r'wordicon.ico')
+            mydir = Path(__file__).parent
+            window.iconbitmap(mydir / 'wordicon.ico')
 
             # Load the back button image
-            img1 = PhotoImage(file="back-btn.png")
+            img1 = PhotoImage(file=str(mydir / "back-btn.png"))
 
             # list of words for the game
             main_words = [
@@ -153,8 +155,8 @@ def main():
                 message_label.config(text=message, fg=color)
                 # Remove the message after 4 seconds
                 window.after(4000, lambda: message_label.config(text=""))
-            
-            # Function to skip/change word
+
+                        # Function to skip/change word
             def skip_word():
                 nonlocal rand_num, points, previous_word, rand_word
                 previous_word = rand_word
@@ -180,6 +182,7 @@ def main():
                     get_input.delete(0, END)
                     hint_label.config(text="HINT ▶")
                     show_message(f"Previous Answer: {previous_word.upper()}")
+
 
             # Function to go back to start page
             def back_button():
@@ -235,7 +238,7 @@ def main():
             submit = Button(button_frame, text="✅ Submit", width=14, bd=4, font=("", 13), bg="#ad8d76", cursor="hand2", command=check)
             submit.grid(row=0, column=1, padx=10, pady=10)  # Pack the submit button to the right with padding
             window.bind('<Return>', lambda event=None: submit.invoke()) # Bind keyboard's ENTER button to submit button
-
+            
             # Hint button
             hint = Button(button_frame, text="ℹ️ Hint", width=14, bd=4, font=("", 13), bg="#ad8d76", cursor="hand2", command= lambda: show_hint(word.cget("text"), hint_count))
             hint.grid(row=1, column=0, padx=10, pady=10)  # Pack the hint button at the top with padding
@@ -252,7 +255,8 @@ def main():
             help_window.resizable(0, 0)
             help_window.title("Word Game")
             help_window.configure(background="#040402")
-            help_window.iconbitmap(r'wordicon.ico')
+            mydir1 = Path(__file__).parent
+            help_window.iconbitmap(mydir1 / 'wordicon.ico')
 
             # Function to go back to start page
             def back_button():
@@ -260,7 +264,7 @@ def main():
                 help_window.destroy()
 
             # Load the back button image
-            img2 = PhotoImage(file="back-btn.png")
+            img2 = PhotoImage(file=str(mydir1 / "back-btn.png"))
 
             frame = Frame(help_window, bg="#040402")
             frame.pack()
@@ -303,10 +307,11 @@ def main():
         main_window.resizable(0, 0)
         main_window.title("Word Game")
         main_window.configure(background="#040402")
-        main_window.iconbitmap(r'wordicon.ico')
+        mydir = Path(__file__).parent
+        main_window.iconbitmap(mydir / 'wordicon.ico')
 
         # Load the image for the start page
-        img0 = PhotoImage(file="wordgame.png")
+        img0 = PhotoImage(file=mydir / "wordgame.png")
 
         # Label to display the image
         image_label = Label(main_window, image=img0, bg="#040402")
