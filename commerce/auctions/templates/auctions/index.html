@@ -5,18 +5,18 @@
         <h2>Active Listings</h2>
         
         <div class="row mx-3">
-        {% for list in listing %}
+        {% for listing in listings %}
             <div class="card mb-3 mr-1" style="max-width: 540px;">
                 <div class="row">
                     <div class="col-md-4">
-                        <img src="{{ list.imageUrl }}" class="img-fluid rounded-start" alt="{{ list.title }}">
+                        <img src="{{ listing.imageUrl }}" class="img-fluid rounded-start" alt="{{ listing.title }}">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
-                            <h5 class="card-title">{{ list.title }}</h5>
-                            <p class="card-text"><b>Price: </b>{{ list.price }}</p>
-                            <p class="card-text"><small class="text-muted">{{ list.description }}</small></p>
-                            <a href="{% url 'listing' id=list.id %}" class="btn btn-info">Details</a>
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text"><b>Price: </b>{{ listing.price }}</p>
+                            <p class="card-text"><small class="text-muted">{{ listing.description }}</small></p>
+                            <a href="{% url 'listing' id=listing.id %}" class="btn btn-info">Details</a>
                         </div>
                     </div>
                 </div>

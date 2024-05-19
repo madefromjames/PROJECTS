@@ -2,8 +2,35 @@
 
 {% block body %}
 
+<div class="container">
+    {% if message %}
+        {% if updated %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% if not listing.isActive and user == listing.price.user %}
+    <div class="alert alert-success" role="alert">
+        Congratulations! You won the Auction
+    </div>
+{% endif %}
+
+
 <div class="row mx-3">
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and listing.isActive %}
+        {% if owner %}
+            <form action="{% url 'closeAuction' id=listing.id %}" class="mx-3">
+                {% csrf_token %}
+                <button class="btn btn-warning">Close Auction</button>
+            </form>
+        {% endif %}
         {% if listingWatchlist %}
             <form action="{% url 'removeWatchist' id=listing.id %}">
                 {% csrf_token %}
@@ -22,10 +49,12 @@
     <h3>Listing: {{ listing.title }}</h3>
     <img src="{{ listing.imageUrl }}" alt="{{ listing.title }}" height="200px">
     <p>{{ listing.description }}</p>
+    <p>{{ countBid }} bid(s) so far</p>
     <h4>${{ listing.price }}</h4>
 </div>
 <div class="form-group">
-    <form action="{% url 'listing' id=listing.id %}" method="post">
+    <form action="{% url 'addBid' id=listing.id %}" method="post">
+        {% csrf_token %}
         <input type="number" min="0" name="bid" class="form-control" id="bids" placeholder="Bid">
         <button class="btn btn-primary my-3">Place Bid</button>
     </form>

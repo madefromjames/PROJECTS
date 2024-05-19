@@ -9,16 +9,54 @@ from .models import User, Category, Listing, Bid
 def index(request):
     activeListing = Listing.objects.filter(isActive=True)
     return render(request, "auctions/index.html", {
-        "listing": activeListing
+        "listings": activeListing
     })
 
 def listing(request, id):
     listing = Listing.objects.get(pk=id)
     listingWatchlist = request.user in listing.watchlist.all()
-    if request.method == "POST":
-        newBid = request.POST["bid"]
+    owner = request.user.username == listing.owner.username
+
+    # countBid = Bid.objects.filter(listing=listing).count()
+
     return render(request, "auctions/listing.html", {
-        "listing": listing, "listingWatchlist": listingWatchlist
+        "listing": listing, "listingWatchlist": listingWatchlist,
+        "owner": owner
+    })
+
+def addBid(request, id):
+    newBid = float(request.POST["bid"])
+    listing = Listing.objects.get(pk=id)
+    if newBid > listing.price:
+        updateBid = Bid(bid=newBid, user=request.user, listing=listing)
+        updateBid.save()
+        listing.price = newBid
+        listing.save()
+
+        countBid = Bid.objects.filter(listing=listing).count()
+
+        return render(request, "auctions/listing.html", {
+            "listing": listing,
+            "message": "Bid updated successfully",
+            "updated": True, "countBid": countBid
+        })
+    else:
+        return render(request, "auctions/listing.html", {
+            "listing": listing,
+            "message": "Bid must be higher than the current price",
+            "updated": False
+        })
+    
+def closeAuction(request, id):
+    listing = Listing.objects.get(pk=id)
+    listingWatchlist = request.user in listing.watchlist.all()
+    owner = request.user.username == listing.owner.username
+    listing.isActive = False
+    listing.save()
+    return render(request, "auctions/listing.html", {
+        "listing": listing, "listingWatchlist": listingWatchlist,
+        "owner": owner, "message": "Auction was closed successfully",
+        "updated": True
     })
 
 def removeWatchlist(request, id):
@@ -60,20 +98,21 @@ def create_list(request):
         # Get the particuar category
         categoryData = Category.objects.get(categoryName=category)
 
-        # Bid
-        bid = Bid(bid=float(price), user=currentUser)
-        bid.save()
 
         # Create a new list object
         newList = Listing(title=title,
                           description=description,
                           imageUrl=image,
-                          price=bid,
+                          price=float(price),
                           owner=currentUser,
                           category=categoryData)
 
         # Insert newList into databse
         newList.save()
+
+        # Create Bid object
+        bid = Bid(listing=newList, user=currentUser)
+        bid.save()
 
         return HttpResponseRedirect(reverse(index))
 
