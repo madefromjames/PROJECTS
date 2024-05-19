@@ -15,6 +15,9 @@ class Bid(models.Model):
     bid = models.FloatField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="userBid")
 
+    def __str__(self) -> str:
+        return str(self.bid)
+
 class Listing(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=300)

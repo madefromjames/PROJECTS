@@ -15,6 +15,8 @@ def index(request):
 def listing(request, id):
     listing = Listing.objects.get(pk=id)
     listingWatchlist = request.user in listing.watchlist.all()
+    if request.method == "POST":
+        newBid = request.POST["bid"]
     return render(request, "auctions/listing.html", {
         "listing": listing, "listingWatchlist": listingWatchlist
     })
@@ -59,7 +61,7 @@ def create_list(request):
         categoryData = Category.objects.get(categoryName=category)
 
         # Bid
-        bid = Bid(float(price), user=currentUser)
+        bid = Bid(bid=float(price), user=currentUser)
         bid.save()
 
         # Create a new list object

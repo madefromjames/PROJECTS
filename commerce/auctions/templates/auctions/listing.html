@@ -22,7 +22,13 @@
     <h3>Listing: {{ listing.title }}</h3>
     <img src="{{ listing.imageUrl }}" alt="{{ listing.title }}" height="200px">
     <p>{{ listing.description }}</p>
-    <p class="card-text"><b>Price: </b>{{ listing.price }}</p>
+    <h4>${{ listing.price }}</h4>
+</div>
+<div class="form-group">
+    <form action="{% url 'listing' id=listing.id %}" method="post">
+        <input type="number" min="0" name="bid" class="form-control" id="bids" placeholder="Bid">
+        <button class="btn btn-primary my-3">Place Bid</button>
+    </form>
 </div>
 
 {% endblock %}
