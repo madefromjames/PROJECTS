@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2>Categories</h2>
+
+<label for="Category">Choose a category</label>
+<div class="form-group">
+    <select name="category" class="custom-select">
+        <option value="" selected>Select Category</option>
+        {% for cat in category %}
+        <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="row mx-3">
+    {% for category in categories %}
+    <div class="card mb-3 mr-1" style="max-width: 540px;">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{ category.imageUrl }}" class="card-img" alt="{{ category.title }}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ category.title }}</h5>
+                    <p class="card-text"><b>Price: </b>${{ category.price }}</p>
+                    <p class="card-text"><small class="text-muted">{{ category.description }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

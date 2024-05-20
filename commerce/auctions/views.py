@@ -89,6 +89,12 @@ def watchlist(request):
         "listing": listing
     })
 
+def categories(request):
+    categories = Category.objects.all()
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
+
 def create_list(request):
     if request.method == "GET":
         categorys = Category.objects.all() 
@@ -107,8 +113,14 @@ def create_list(request):
         currentUser = request.user
 
         # Get the particuar category
-        categoryData = Category.objects.get(categoryName=category)
-
+        categoryData = None
+        if category:
+            try:
+                # Get the particular category
+                categoryData = Category.objects.get(categoryName=category)
+            except Category.DoesNotExist:
+                # If category does not exist, set categoryData to None and continue
+                categoryData = None
 
         # Create a new list object
         newList = Listing(title=title,

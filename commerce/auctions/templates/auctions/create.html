@@ -24,7 +24,7 @@
         <label for="Category">Choose a category</label>
         <div class="form-group">
             <select name="category" class="custom-select">
-                <option selected>Select Category</option>
+                <option value="" selected>Select Category</option>
                 {% for cat in category %}
                 <option value="{{ cat }}">{{ cat }}</option>
                 {% endfor %}
