@@ -17,11 +17,16 @@ def listing(request, id):
     listingWatchlist = request.user in listing.watchlist.all()
     owner = request.user.username == listing.owner.username
 
-    # countBid = Bid.objects.filter(listing=listing).count()
+    countBid = Bid.objects.filter(listing=listing).count()
+
+    # Find the current highest bid user
+    highest_bid = Bid.objects.filter(listing=listing).order_by('-bid').first()
+    highest_bid_user = highest_bid.user if highest_bid else None
 
     return render(request, "auctions/listing.html", {
         "listing": listing, "listingWatchlist": listingWatchlist,
-        "owner": owner
+        "owner": owner, "countBid": countBid,
+        "highest_bid_user": highest_bid_user
     })
 
 def addBid(request, id):
@@ -35,16 +40,22 @@ def addBid(request, id):
 
         countBid = Bid.objects.filter(listing=listing).count()
 
+        # Find the current highest bid user
+        highest_bid = Bid.objects.filter(listing=listing).order_by('-bid').first()
+        highest_bid_user = highest_bid.user if highest_bid else None
+
         return render(request, "auctions/listing.html", {
             "listing": listing,
             "message": "Bid updated successfully",
-            "updated": True, "countBid": countBid
+            "updated": True, "countBid": countBid,
+            "highest_bid_user": highest_bid_user
         })
     else:
         return render(request, "auctions/listing.html", {
             "listing": listing,
             "message": "Bid must be higher than the current price",
-            "updated": False
+            "updated": False,
+            "user": request.user
         })
     
 def closeAuction(request, id):
@@ -111,7 +122,7 @@ def create_list(request):
         newList.save()
 
         # Create Bid object
-        bid = Bid(listing=newList, user=currentUser)
+        bid = Bid(listing=newList, user=currentUser, bid=price)
         bid.save()
 
         return HttpResponseRedirect(reverse(index))

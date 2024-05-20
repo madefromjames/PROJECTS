@@ -16,9 +16,9 @@
     {% endif %}
 </div>
 
-{% if not listing.isActive and user == listing.price.user %}
+{% if not listing.isActive and user == highest_bid_user %}
     <div class="alert alert-success" role="alert">
-        Congratulations! You won the Auction
+        Congratulations! You won the Auction.
     </div>
 {% endif %}
 
@@ -28,18 +28,18 @@
         {% if owner %}
             <form action="{% url 'closeAuction' id=listing.id %}" class="mx-3">
                 {% csrf_token %}
-                <button class="btn btn-warning">Close Auction</button>
+                <button class="btn btn-warning btn-sm">Close Auction</button>
             </form>
         {% endif %}
         {% if listingWatchlist %}
             <form action="{% url 'removeWatchist' id=listing.id %}">
                 {% csrf_token %}
-                <button class="btn btn-danger">Remove Watchlist</button>
+                <button class="btn btn-danger btn-sm">Remove Watchlist</button>
             </form>
         {% else %}
             <form action="{% url 'addWatchist' id=listing.id %}">
                 {% csrf_token %}
-                <button class="btn btn-success">Add Watchlist</button>
+                <button class="btn btn-success btn-sm">Add Watchlist</button>
             </form>
         {% endif  %}
     {% endif  %}
@@ -49,15 +49,26 @@
     <h3>Listing: {{ listing.title }}</h3>
     <img src="{{ listing.imageUrl }}" alt="{{ listing.title }}" height="200px">
     <p>{{ listing.description }}</p>
-    <p>{{ countBid }} bid(s) so far</p>
+    {% if listing.isActive and user == listing.price.user %}
+        <p>{{ countBid }} bid(s) so far. Your bid is the current bid.</p>
+    {% else %}
+        <p>{{ countBid }} bid(s) so far</p>
+    {% endif %}
     <h4>${{ listing.price }}</h4>
 </div>
-<div class="form-group">
-    <form action="{% url 'addBid' id=listing.id %}" method="post">
-        {% csrf_token %}
-        <input type="number" min="0" name="bid" class="form-control" id="bids" placeholder="Bid">
-        <button class="btn btn-primary my-3">Place Bid</button>
-    </form>
-</div>
+
+{% if listing.isActive %}
+    <div class="form-group">
+        <form action="{% url 'addBid' id=listing.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" min="0" name="bid" class="form-control" id="bids" placeholder="Bid">
+            <button class="btn btn-primary my-3">Place Bid</button>
+        </form>
+    </div>
+{% else %}
+
+{% endif %}
+
+<h4>Details</h4> 
 
 {% endblock %}

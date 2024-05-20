@@ -21,7 +21,7 @@
                 <div class="col-md-8">
                     <div class="card-body">
                         <h5 class="card-title">{{ list.title }}</h5>
-                        <p class="card-text"><b>Price: </b>{{ list.price }}</p>
+                        <p class="card-text"><b>Price: </b>${{ list.price }}</p>
                         <p class="card-text"><small class="text-muted">{{ list.description }}</small></p>
                         <a href="{% url 'listing' id=list.id %}" class="btn btn-info">Details</a>
                     </div>
