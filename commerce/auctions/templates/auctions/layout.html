@@ -43,6 +43,11 @@
             {% endif %}
         </ul>
         <hr>
+        {% if not user.is_authenticated %}
+            <div class="text-center">
+                Log In or Register to view or create Active Listings😊
+            </div>
+        {% endif %}
         {% block body %}
         {% endblock %}
     </body>

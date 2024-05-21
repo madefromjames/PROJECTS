@@ -23,7 +23,7 @@
 {% endif %}
 
 
-<div class="row mx-3">
+<div class="row mx-3 mb-3">
     {% if user.is_authenticated and listing.isActive %}
         {% if owner %}
             <form action="{% url 'closeAuction' id=listing.id %}" class="mr-3">
@@ -61,7 +61,7 @@
     <div class="form-group">
         <form action="{% url 'addBid' id=listing.id %}" method="post">
             {% csrf_token %}
-            <input type="number" min="0" name="bid" class="form-control" id="bids" placeholder="Bid">
+            <input type="number" name="bid" class="form-control" id="bids" placeholder="Bid" step="0.01">
             <button class="btn btn-primary mt-3">Place Bid</button>
         </form>
     </div>

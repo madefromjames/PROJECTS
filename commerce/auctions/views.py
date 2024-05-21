@@ -11,6 +11,33 @@ def index(request):
     return render(request, "auctions/index.html", {
         "listings": activeListing
     })
+    
+def categories(request):
+    if request.method == "POST":
+        categoryForm = request.POST['category']
+        allCategories = Category.objects.all()
+
+        if categoryForm == "No Category":
+             # If "No Category" is selected, filter listings with no category
+            activeListing = Listing.objects.filter(category__isnull=True)
+        elif categoryForm:
+            try:
+                # If a specific category is selected, filter listings by that category
+                category = Category.objects.get(categoryName=categoryForm)
+                activeListing = Listing.objects.filter(isActive=True, category=category)
+            except Category.DoesNotExist:
+                # If the selected category does not exist, do nothing (show all active listings)
+                pass
+        
+        return render(request, "auctions/categories.html", {
+            "categories": allCategories, "listings": activeListing
+        })
+    else:
+        allCategories = Category.objects.all()
+        activeListing = Listing.objects.filter(isActive=True)
+        return render(request, "auctions/categories.html", {
+            "categories": allCategories, "listings": activeListing
+        })
 
 def listing(request, id):
     listing = Listing.objects.get(pk=id)
@@ -28,6 +55,7 @@ def listing(request, id):
         "owner": owner, "countBid": countBid,
         "highest_bid_user": highest_bid_user
     })
+
 
 def addBid(request, id):
     newBid = float(request.POST["bid"])
@@ -89,11 +117,6 @@ def watchlist(request):
         "listing": listing
     })
 
-def categories(request):
-    categories = Category.objects.all()
-    return render(request, "auctions/categories.html", {
-        "categories": categories
-    })
 
 def create_list(request):
     if request.method == "GET":

@@ -3,32 +3,56 @@
 {% block body %}
 <h2>Categories</h2>
 
-<label for="Category">Choose a category</label>
-<div class="form-group">
-    <select name="category" class="custom-select">
-        <option value="" selected>Select Category</option>
-        {% for cat in category %}
-        <option value="{{ cat }}">{{ cat }}</option>
-        {% endfor %}
-    </select>
-</div>
 
-<div class="row mx-3">
-    {% for category in categories %}
-    <div class="card mb-3 mr-1" style="max-width: 540px;">
-        <div class="row">
-            <div class="col-md-4">
-                <img src="{{ category.imageUrl }}" class="card-img" alt="{{ category.title }}">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">{{ category.title }}</h5>
-                    <p class="card-text"><b>Price: </b>${{ category.price }}</p>
-                    <p class="card-text"><small class="text-muted">{{ category.description }}</small></p>
+<form action="{% url 'categories' %}" method="post" class="row g-3 mb-3">
+    {% csrf_token %}
+    <div class="col-auto">
+        <label for="Category">Choose a category</label>
+    </div>
+    <div class="col-auto">
+        <select name="category" class="form-control">
+            <option value="" selected>Select Category</option>
+            <option value="No Category">No Category</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+
+{% if not listings %}
+    <h5>No Categories Found</h5>
+{% else %}
+    <div class="row mx-3">
+        {% for listing in listings %}
+            <div class="card mb-3 mr-1" style="max-width: 540px;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="card-text mx-3"><small class="text-muted">
+                            {% if listing.category %}
+                                {{ listing.category.categoryName }}
+                            {% else %}
+                                No Categories Listed
+                            {% endif %}
+                        </small></p>
+                        <img src="{{ listing.imageUrl }}" class="card-img" alt="{{ listing.title }}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text"><b>Price: </b>${{ listing.price }}</p>
+                            <p class="card-text"><small class="text-muted">{{ listing.description }}</small></p>
+                            <a href="{% url 'listing' id=listing.id %}" class="btn btn-info btn-sm">Details</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
+{% endif %}
+
 {% endblock %}
