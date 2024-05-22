@@ -53,7 +53,8 @@ def listing(request, id):
     return render(request, "auctions/listing.html", {
         "listing": listing, "listingWatchlist": listingWatchlist,
         "owner": owner, "countBid": countBid,
-        "highest_bid_user": highest_bid_user
+        "highest_bid_user": highest_bid_user,
+        "watchlist": watchlist
     })
 
 
