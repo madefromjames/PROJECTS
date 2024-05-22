@@ -62,12 +62,17 @@ def listing(request, id):
 
     allComment = Comment.objects.filter(listing=listing).order_by('-created_at')
 
+    # Retrieve and clear session message
+    message = request.session.pop('message', None)
+    updated = request.session.pop('updated', None)
+
     return render(request, "auctions/listing.html", {
         "listing": listing, "listingWatchlist": listingWatchlist,
         "owner": owner, "countBid": countBid,
         "highest_bid_user": highest_bid_user,
         "watchlist": watchlist, "allComment": allComment,
-        "watchlistCount": watchlistCount
+        "watchlistCount": watchlistCount,
+        "message": message, "updated": updated
     })
 
 
@@ -80,37 +85,24 @@ def addBid(request, id):
         listing.price = newBid
         listing.save()
 
-        countBid = Bid.objects.filter(listing=listing).count()
-
-        # Find the current highest bid user
-        highest_bid = Bid.objects.filter(listing=listing).order_by('-bid').first()
-        highest_bid_user = highest_bid.user if highest_bid else None
-
-        return render(request, "auctions/listing.html", {
-            "listing": listing,
-            "message": "Bid updated successfully",
-            "updated": True, "countBid": countBid,
-            "highest_bid_user": highest_bid_user
-        })
+        request.session['message'] = "Bid updated successfully"
+        request.session['updated'] = True
     else:
-        return render(request, "auctions/listing.html", {
-            "listing": listing,
-            "message": "Bid must be higher than the current price",
-            "updated": False,
-            "user": request.user
-        })
+        # Message to display after redirection
+        request.session['message'] = "Bid must be higher than the current price"
+        request.session['updated'] = False
+
+    return HttpResponseRedirect(reverse("listing", args=(id, )))
     
 def closeAuction(request, id):
     listing = Listing.objects.get(pk=id)
-    listingWatchlist = request.user in listing.watchlist.all()
-    owner = request.user.username == listing.owner.username
     listing.isActive = False
     listing.save()
-    return render(request, "auctions/listing.html", {
-        "listing": listing, "listingWatchlist": listingWatchlist,
-        "owner": owner, "message": "Auction was closed successfully",
-        "updated": True
-    })
+
+    request.session['message'] = "Auction was closed successfully"
+    request.session['updated'] = True
+
+    return HttpResponseRedirect(reverse("listing", args=(id, )))
 
 def removeWatchlist(request, id):
     listing = Listing.objects.get(pk=id)
