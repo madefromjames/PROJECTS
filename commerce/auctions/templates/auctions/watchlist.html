@@ -2,17 +2,12 @@
 
 {% block body %}
     <h2>Watchlist</h2>
-    <div class="row mx-3">
-    {% for list in listing %}
-        <!-- <div class="card" style="width: 18rem;">
-            <img src="{{ list.imageUrl }}" class="card-img" alt="{{ list.title }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ list.title }}</h5>
-                <p class="card-text"><b>Price: </b>{{ list.price }}</p>
-                <p class="card-text"><small class="text-muted">{{ list.description }}</small></p>
-            </div>
-        </div>     -->
 
+    {% if not watchlist %}
+        <h5>No watchlist Found</h5>
+    {% endif %}
+    <div class="row mx-3">
+    {% for list in watchlist %}
         <div class="card mb-3 mr-1" style="max-width: 540px;">
             <div class="row">
                 <div class="col-md-4">
@@ -23,7 +18,15 @@
                         <h5 class="card-title">{{ list.title }}</h5>
                         <p class="card-text"><b>Price: </b>${{ list.price }}</p>
                         <p class="card-text"><small class="text-muted">{{ list.description }}</small></p>
-                        <a href="{% url 'listing' id=list.id %}" class="btn btn-info btn-sm">Details</a>
+                        <div class="row">
+                            <a href="{% url 'listing' id=list.id %}" class="btn btn-info btn-sm">Details</a>
+                            {% if list %}
+                                <form action="{% url 'removeWatchist' id=list.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger btn-sm mx-3">Remove Watchlist</button>
+                                </form>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>

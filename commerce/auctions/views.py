@@ -21,8 +21,7 @@ def categories(request):
     if request.method == "POST":
         categoryForm = request.POST['category']
         allCategories = Category.objects.all()
-        listingCount = request.user.watchlist.all()
-        watchlistCount = listingCount.count()
+        watchlistCount = request.user.watchlist.all().count()
 
         if categoryForm == "No Category":
              # If "No Category" is selected, filter listings with no category
@@ -41,9 +40,7 @@ def categories(request):
             "watchlistCount": watchlistCount
         })
     else:
-        currentUser = request.user
-        listing = currentUser.watchlist.all()
-        watchlistCount = listing.count()
+        watchlistCount = request.user.watchlist.all().count()
         allCategories = Category.objects.all()
         activeListing = Listing.objects.filter(isActive=True)
         return render(request, "auctions/categories.html", {
@@ -57,15 +54,13 @@ def listing(request, id):
     owner = request.user.username == listing.owner.username
 
     countBid = Bid.objects.filter(listing=listing).count()
-    currentUser = request.user
-    listingCount = currentUser.watchlist.all()
-    watchlistCount = listingCount.count()
+    watchlistCount = request.user.watchlist.all().count()
 
     # Find the current highest bid user
     highest_bid = Bid.objects.filter(listing=listing).order_by('-bid').first()
     highest_bid_user = highest_bid.user if highest_bid else None
 
-    allComment = Comment.objects.all()
+    allComment = Comment.objects.filter(listing=listing).order_by('-created_at')
 
     return render(request, "auctions/listing.html", {
         "listing": listing, "listingWatchlist": listingWatchlist,
@@ -130,11 +125,10 @@ def addWatchlist(request, id):
     return HttpResponseRedirect(reverse("listing", args=(id, )))
 
 def watchlist(request):
-    currentUser = request.user
-    listing = currentUser.watchlist.all()
-    watchlistCount = listing.count()
+    watchlist = request.user.watchlist.all()
+    watchlistCount = watchlist.count()
     return render(request, "auctions/watchlist.html", {
-        "listing": listing, "watchlistCount": watchlistCount
+        "watchlist": watchlist, "watchlistCount": watchlistCount
     })
 
 def comment(request, id):
@@ -152,7 +146,7 @@ def comment(request, id):
 def create_list(request):
     if request.method == "GET":
         categorys = Category.objects.all()
-        watchlistCount = request.user.watchlist.all()
+        watchlistCount = request.user.watchlist.all().count()
         return render(request, "auctions/create.html", {
             "category": categorys, "watchlistCount": watchlistCount
         })

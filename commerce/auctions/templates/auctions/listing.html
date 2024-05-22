@@ -96,7 +96,7 @@
 {% for comment in allComment %}
     <figure>
         <figcaption class="blockquote-footer">
-        comment by<cite title="Source Title"> {{ comment.author }}</cite>
+        {{comment.author}};<cite title="Source Title"> {{ comment.created_at }}</cite>
         </figcaption>
         <p>{{ comment.message }}</p><hr>
     </figure>

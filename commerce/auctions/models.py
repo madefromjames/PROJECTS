@@ -21,6 +21,7 @@ class Listing(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True, related_name="category")
     watchlist = models.ManyToManyField(User, blank=True, related_name="watchlist")
+    listed_at = models.DateTimeField(auto_now_add=True)
 
     def count_bids(self):
         return self.bids.count()
@@ -40,6 +41,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="author")
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listComment")
     message = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f"{str(self.author)} comment on {str(self.listing)}"
