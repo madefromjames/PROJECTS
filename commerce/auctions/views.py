@@ -4,18 +4,25 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Category, Listing, Bid
+from .models import User, Category, Listing, Bid, Comment
 
 def index(request):
     activeListing = Listing.objects.filter(isActive=True)
+    watchlistCount = 0
+
+    if request.user.is_authenticated:
+        watchlistCount = request.user.watchlist.all().count()
+
     return render(request, "auctions/index.html", {
-        "listings": activeListing
+        "listings": activeListing, "watchlistCount": watchlistCount
     })
     
 def categories(request):
     if request.method == "POST":
         categoryForm = request.POST['category']
         allCategories = Category.objects.all()
+        listingCount = request.user.watchlist.all()
+        watchlistCount = listingCount.count()
 
         if categoryForm == "No Category":
              # If "No Category" is selected, filter listings with no category
@@ -30,13 +37,18 @@ def categories(request):
                 pass
         
         return render(request, "auctions/categories.html", {
-            "categories": allCategories, "listings": activeListing
+            "categories": allCategories, "listings": activeListing,
+            "watchlistCount": watchlistCount
         })
     else:
+        currentUser = request.user
+        listing = currentUser.watchlist.all()
+        watchlistCount = listing.count()
         allCategories = Category.objects.all()
         activeListing = Listing.objects.filter(isActive=True)
         return render(request, "auctions/categories.html", {
-            "categories": allCategories, "listings": activeListing
+            "categories": allCategories, "listings": activeListing,
+            "watchlistCount": watchlistCount
         })
 
 def listing(request, id):
@@ -45,16 +57,22 @@ def listing(request, id):
     owner = request.user.username == listing.owner.username
 
     countBid = Bid.objects.filter(listing=listing).count()
+    currentUser = request.user
+    listingCount = currentUser.watchlist.all()
+    watchlistCount = listingCount.count()
 
     # Find the current highest bid user
     highest_bid = Bid.objects.filter(listing=listing).order_by('-bid').first()
     highest_bid_user = highest_bid.user if highest_bid else None
 
+    allComment = Comment.objects.all()
+
     return render(request, "auctions/listing.html", {
         "listing": listing, "listingWatchlist": listingWatchlist,
         "owner": owner, "countBid": countBid,
         "highest_bid_user": highest_bid_user,
-        "watchlist": watchlist
+        "watchlist": watchlist, "allComment": allComment,
+        "watchlistCount": watchlistCount
     })
 
 
@@ -114,16 +132,29 @@ def addWatchlist(request, id):
 def watchlist(request):
     currentUser = request.user
     listing = currentUser.watchlist.all()
+    watchlistCount = listing.count()
     return render(request, "auctions/watchlist.html", {
-        "listing": listing
+        "listing": listing, "watchlistCount": watchlistCount
     })
+
+def comment(request, id):
+    if request.method == "POST":
+        listing = Listing.objects.get(pk=id)
+        comment = request.POST["comment"]
+        currentUser = request.user
+
+        newComment = Comment(author=currentUser, listing=listing, message=comment)
+        newComment.save()
+
+        return HttpResponseRedirect(reverse("listing", args=(id, )))
 
 
 def create_list(request):
     if request.method == "GET":
-        categorys = Category.objects.all() 
+        categorys = Category.objects.all()
+        watchlistCount = request.user.watchlist.all()
         return render(request, "auctions/create.html", {
-            "category": categorys
+            "category": categorys, "watchlistCount": watchlistCount
         })
     else:
         # Get the form data

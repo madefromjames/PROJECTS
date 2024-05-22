@@ -35,3 +35,11 @@ class Bid(models.Model):
 
     def __str__(self) -> str:
         return str(self.bid)
+
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="author")
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listComment")
+    message = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return f"{str(self.author)} comment on {str(self.listing)}"
