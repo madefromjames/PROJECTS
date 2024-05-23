@@ -1,0 +1,5 @@
+{
+    "scripts": {
+      "vercel-build": "python3 manage.py collectstatic --noinput"
+    }
+  }
