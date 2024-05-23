@@ -63,7 +63,7 @@
           </div>
         </div>
       </div>
-    {% if listing.isActive and user == listing.price.user %}
+    {% if listing.isActive and user == highest_bid_user %}
         <p>{{ countBid }} bid(s) so far. Your bid is the current bid.</p>
     {% else %}
         <p>{{ countBid }} bid(s) so far</p>
