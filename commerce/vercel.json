@@ -3,7 +3,10 @@
     "builds": [
       {
         "src": "commerce/wsgi.py",
-        "use": "@vercel/python"
+        "use": "@vercel/python",
+        "config": {
+          "zeroConfig": true
+        }
       },
       {
         "src": "staticfiles/**",
@@ -13,7 +16,7 @@
     "routes": [
       {
         "src": "/static/(.*)",
-        "dest": "/static/$1"
+        "dest": "/staticfiles/$1"
       },
       {
         "src": "/(.*)",
