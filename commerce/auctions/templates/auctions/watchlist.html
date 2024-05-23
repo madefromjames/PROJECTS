@@ -5,6 +5,7 @@
 
     {% if not watchlist %}
         <h5>No watchlist Found</h5>
+        Feel free to check active Listing of your choice and add it to watchlist!😊
     {% endif %}
     <div class="row mx-3">
     {% for list in watchlist %}
@@ -23,7 +24,7 @@
                             {% if list %}
                                 <form action="{% url 'removeWatchist' id=list.id %}">
                                     {% csrf_token %}
-                                    <button class="btn btn-danger btn-sm mx-3">Remove Watchlist</button>
+                                    <button class="btn btn-secondary btn-sm mx-3">Remove Watchlist</button>
                                 </form>
                             {% endif %}
                         </div>
