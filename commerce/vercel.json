@@ -1,27 +1,14 @@
 {
-    "version": 2,
     "builds": [
       {
-        "src": "commerce/wsgi.py",
-        "use": "@vercel/python",
-        "config": {
-          "zeroConfig": true
-        }
-      },
-      {
-        "src": "staticfiles/**",
-        "use": "@vercel/static"
+        "src": "auctions/wsgi.py",
+        "use": "@vercel/python"
       }
     ],
     "routes": [
       {
-        "src": "/static/(.*)",
-        "dest": "/staticfiles/$1"
-      },
-      {
         "src": "/(.*)",
-        "dest": "commerce/wsgi.py"
+        "dest": "auctions/wsgi.py"
       }
     ]
-  }
-  
+}
