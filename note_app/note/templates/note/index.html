@@ -4,6 +4,49 @@
 {% block body %}
     {% if user.is_authenticated %}
     <h3><strong>{{ user.username }}</strong> note</h3>
+
+    <form action="{% url 'comment' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-header">
+              Create a new note
+            </div>
+            <div class="card-body">
+              <blockquote class="blockquote mb-0">
+                <input name="title" type="text" class="form-control" placeholder="Title">
+                <textarea name="content" class="form-control" placeholder="Enter your text here" style="height: 100px"></textarea>
+                <input name="file" type="file" class="form-control">
+                <button class="btn btn-primary mt-3">Submit</button>
+                <!-- <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer> -->
+              </blockquote>
+            </div>
+          </div>
+    </form>
+
+    <div class="row">
+        {% for content in contents %}
+        <div class="card m-3 mr-1" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    {% if content.image %}
+                    <img src="{{ content.image }}" class="img-fluid rounded-start" alt="...">
+                    {% else %}
+                    <img src="{% static 'images/images.png' %}" class="img-fluid rounded-start" alt="...">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ content.title }}</h5>
+                        <p class="card-text">{{ content.content }}</p>
+                        <p class="text-muted"><small class="text-body-secondary">{{ content.created_at }}</small></p>
+                        <button type="button" class="btn btn-secondary btn-sm">Edit</button>
+                        <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
     {% else %}
     <h3>Login to see note(s)</h3>
     {% endif %}
