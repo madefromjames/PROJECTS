@@ -23,6 +23,12 @@ def comment(request):
 
     return render(request, "note/index.html")
 
+def edit(request):
+    pass
+
+def delete(request, pk):
+    pass
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
